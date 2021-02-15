@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'file:///F:/Projects/androidBrews/echo_app_v3/lib/screens/homePage.dart';
+import 'package:echo_v3/screens/homePage.dart';
 import 'package:echo_v3/screens/registration.dart';
 
 class LoginPage extends StatefulWidget {
