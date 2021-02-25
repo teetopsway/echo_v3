@@ -1,7 +1,7 @@
 /*main.dart*/
 
 import 'package:flutter/material.dart';
-import 'file:///F:/Projects/androidBrews/echo_app_v3/lib/screens/loginPage.dart';
+import 'package:echo_v3/screens//loginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
