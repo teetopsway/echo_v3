@@ -5,21 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:echo_v3/screens/seedPage.dart';
 
-void main() => runApp(EchoApp());
 
-class EchoApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Echo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
-    );
-  }
-}
 class HomePage extends StatefulWidget {
 
   @override
@@ -107,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                     addUserData();
                     Navigator.push(context,
                         MaterialPageRoute(
-                            builder: (context) => HomePage()));
+                            builder: (context) => SeedPage()));
                   } else {
                       Fluttertoast.showToast(
                       msg: "Please Fill All Fields",

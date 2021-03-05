@@ -4,21 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:echo_v3/screens/loginPage.dart';
 import 'package:echo_v3/main.dart';
 
-void main() => runApp(EchoApp());
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Echo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: RegistrationPage(),
-    );
-  }
-}
 class RegistrationPage extends StatefulWidget {
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
