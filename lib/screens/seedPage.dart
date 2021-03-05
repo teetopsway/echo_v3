@@ -9,6 +9,7 @@ class SeedPage extends StatefulWidget {
   _SeedPageState createState() => _SeedPageState();
   }
 
+var pizzaPref, latinPref, asianPref;
 
 class _SeedPageState extends State {
   @override
@@ -18,7 +19,7 @@ class _SeedPageState extends State {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final userId = user.uid;
-    var pizzaPref, latinPref, asianPref;
+
 
     Future<void> addUserPref() {
       return userPref
@@ -59,6 +60,16 @@ class _SeedPageState extends State {
             value: 2,
             groupValue: asianPref,
             title: Text('2'),
+            onChanged: (value) {
+              setState(() {
+                asianPref = value;
+              });
+            },
+          ),
+          RadioListTile(
+            value: 3,
+            groupValue: asianPref,
+            title: Text('3'),
             onChanged: (value) {
               setState(() {
                 asianPref = value;
