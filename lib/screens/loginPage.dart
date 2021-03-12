@@ -96,7 +96,39 @@ class _LoginPageState extends State<LoginPage> {
                           showProgress = false;
                         });
                       }
-                    } catch (e) {}
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        Fluttertoast.showToast(
+                            msg: "User Not Found",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.blueAccent,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                        setState(() {
+                          showProgress = false;
+                        });
+                        print('No user found for that email.');
+                      } else if (e.code == 'wrong-password') {
+                        Fluttertoast.showToast(
+                            msg: "Incorrect Password",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.blueAccent,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                        setState(() {
+                          showProgress = false;
+                        });
+                        print('Wrong password provided for that user.');
+                      }
+                    }
                   },
                   minWidth: 200.0,
                   height: 45.0,
