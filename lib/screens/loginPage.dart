@@ -11,6 +11,8 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
+
 class _LoginPageState extends State<LoginPage> {
   final _auth = FirebaseAuth.instance;
   bool showProgress = false;
@@ -75,12 +77,31 @@ class _LoginPageState extends State<LoginPage> {
                 child: MaterialButton(
                   onPressed: () async {
                     setState(() {
+
+                      bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+                      print(emailValid);
+                      if (emailValid == false) {
+                        Fluttertoast.showToast(
+                            msg: "Please enter an Email",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.blueAccent,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                        setState(() {
+                          showProgress = false;
+                        });
+                      }
                       showProgress = true;
                     });
                     try {
                       final newUser = await _auth.signInWithEmailAndPassword(
                           email: email, password: password);
                       print(newUser.toString());
+
                       if (newUser != null) {
                         Fluttertoast.showToast(
                             msg: "Login Successfull",
@@ -96,7 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                           showProgress = false;
                         });
                       }
+
                     } on FirebaseAuthException catch (e) {
+
                       if (e.code == 'user-not-found') {
                         Fluttertoast.showToast(
                             msg: "User Not Found",
@@ -129,6 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         print('Wrong password provided for that user.');
                       }
                     }
+
                   },
                   minWidth: 200.0,
                   height: 45.0,
