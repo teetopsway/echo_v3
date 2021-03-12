@@ -1,5 +1,5 @@
 /*main.dart*/
-
+import 'package:echo_v3/screens/seedPage.dart';
 import 'package:flutter/material.dart';
 import 'package:echo_v3/screens//loginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +19,7 @@ class EchoApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: SeedPage(),
     );
   }
 }
