@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:echo_v3/screens/mapScreen.dart';
 
 class SeedPage extends StatefulWidget {
   @override
@@ -184,8 +185,21 @@ class _SeedPageState extends State {
             borderRadius: BorderRadius.circular(32.0),
             child: MaterialButton(
               onPressed: () {
-                addUserPref();
-                
+                if (pizzaPref != null &&
+                    latinPref != null &&
+                    asianPref != null) {
+                  addUserPref();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => mapScreen()));
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Please Rate All Genres",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Colors.blueAccent,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
               },
               minWidth: 200.0,
               height: 45.0,
