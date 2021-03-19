@@ -190,7 +190,7 @@ class _SeedPageState extends State {
                     asianPref != null) {
                   addUserPref();
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => mapScreen()));
+                      MaterialPageRoute(builder: (context) => MapScreen()));
                 } else {
                   Fluttertoast.showToast(
                       msg: "Please Rate All Genres",

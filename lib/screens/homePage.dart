@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
 
           if (userId == a2) {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => mapScreen()));
+                context, MaterialPageRoute(builder: (context) => MapScreen()));
             print('pass');
           } else {
             print(a4);

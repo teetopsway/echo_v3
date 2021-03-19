@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:echo_v3/screens//loginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:echo_v3/screens/mapScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ class EchoApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: MapScreen(),
     );
   }
 }
