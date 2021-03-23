@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,7 +22,10 @@ class _MapScreenState extends State<MapScreen> {
     _location.onLocationChanged.listen((l) {
       mapController.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude), zoom: 11,),
+          CameraPosition(
+            target: LatLng(l.latitude, l.longitude),
+            zoom: 11,
+          ),
         ),
       );
     });
@@ -38,16 +42,31 @@ class _MapScreenState extends State<MapScreen> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.blue[50],
-        body: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: _initialcameraposition
+        body: Container(
+          child: Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 6,
+                child: GoogleMap(
+                  initialCameraPosition:
+                      CameraPosition(target: _initialcameraposition),
+                  onMapCreated: _onMapCreated,
+                  myLocationButtonEnabled: true,
+                  myLocationEnabled: true,
+                  mapType: MapType.normal,
+                ),
+                ),
+                Expanded(
+                  flex: 4,
+                child: ListView(
+                  
+                ),
+                ),
+              ],
+            ),
           ),
-          onMapCreated: _onMapCreated,
-          myLocationButtonEnabled: true,
-          myLocationEnabled: true,
-          mapType: MapType.normal,
         ),
-      ),
-    );
+      );
+
   }
 }
