@@ -20,7 +20,7 @@ class EchoApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: MapScreen(),
     );
   }
 }
