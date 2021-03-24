@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
 
@@ -44,9 +44,9 @@ class _MapScreenState extends State<MapScreen> {
         backgroundColor: Colors.blue[50],
         body: Container(
           child: Column(
-              children: <Widget>[
-                Expanded(
-                  flex: 6,
+            children: <Widget>[
+              Expanded(
+                flex: 6,
                 child: GoogleMap(
                   initialCameraPosition:
                       CameraPosition(target: _initialcameraposition),
@@ -55,18 +55,37 @@ class _MapScreenState extends State<MapScreen> {
                   myLocationEnabled: true,
                   mapType: MapType.normal,
                 ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  children: <Widget>[
+                    Flexible(
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('locationData')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) return new Text('Loading...');
+                        return new ListView(
+                          children: snapshot.data.docs.map((docs) {
+                            return new ListTile(
+                              title: new Text(docs.data()['location']),
+                              subtitle: new Text(docs.data()['name']),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  flex: 4,
-                child: ListView(
-                  
-                ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
-
+      ),
+    );
   }
 }
