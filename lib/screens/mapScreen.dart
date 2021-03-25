@@ -21,27 +21,31 @@ class _MapScreenState extends State<MapScreen> {
   BitmapDescriptor pinLocationIcon;
 
   populateClients() {
-    FirebaseFirestore.instance.collection("location").get().then((docs) {
+    FirebaseFirestore.instance.collection("locationData").get().then((docs) {
       if (docs.docs.isNotEmpty) {
         for (int i = 0; i < docs.docs.length; ++i) {
-          initMarker(docs.docs[i].data(), docs.docs[i].id);
+          print(docs.docs[i]);
+          print(i);
+          print(docs.docs.length);
+          initMarker(docs.docs[i], docs.docs[i].id);
         }
       }
+      print('populateClients sucess');
     });
   }
 
-  void initMarker(tomb, tombId) {
-    var markerIdVal = tombId;
+  void initMarker(bus, busId) {
+    var markerIdVal = busId;
     final MarkerId markerId = MarkerId(markerIdVal);
-
     final Marker marker = Marker(
       markerId: markerId,
       position: LatLng(
-          tomb.data()['location'].lat, tomb.data()['location'].long),
+          bus["lat"], bus["long"]),
     );
     setState(() {
       markers[markerId] = marker;
     });
+    print('initmarker sucess');
   }
 
 
@@ -60,12 +64,14 @@ class _MapScreenState extends State<MapScreen> {
           ),
 
         ),
-      );
+      ); populateClients();
+      print('_onMapCreated sucess');
     });
     return l;
   }
 
   @override
+
   Widget build(BuildContext context) {
     //CollectionReference userPref =
     //FirebaseFirestore.instance.collection('userPref');
@@ -105,10 +111,10 @@ class _MapScreenState extends State<MapScreen> {
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) return new Text('Loading...');
                         return new ListView(
-                          children: snapshot.data.docs.map((docs) {
+                          children: snapshot.data.docs.map((docsTitles) {
                             return new ListTile(
-                              title: new Text(docs.data()['name']),
-                              subtitle: new Text(docs.data()['address']),
+                              title: new Text(docsTitles.data()['name']),
+                              subtitle: new Text(docsTitles.data()['address']),
                             );
                           }).toList(),
                         );
