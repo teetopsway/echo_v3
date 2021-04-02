@@ -4,12 +4,10 @@ import 'package:flutter/services.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
 
-
 class MapScreen extends StatefulWidget {
-
   @override
   _MapScreenState createState() => _MapScreenState();
 }
@@ -39,15 +37,13 @@ class _MapScreenState extends State<MapScreen> {
     final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
       markerId: markerId,
-      position: LatLng(
-          bus["lat"], bus["long"]),
+      position: LatLng(bus["lat"], bus["long"]),
     );
     setState(() {
       markers[markerId] = marker;
     });
     print('initmarker sucess');
   }
-
 
   Location _location = Location();
   var l;
@@ -62,22 +58,47 @@ class _MapScreenState extends State<MapScreen> {
             target: LatLng(l.latitude, l.longitude),
             zoom: 11,
           ),
-
         ),
-      ); populateClients();
+      );
+      populateClients();
       print('_onMapCreated sucess');
     });
     return l;
   }
 
-  @override
+  Future<void> addFavorite(id, genre) async {
+    await FirebaseFirestore.instance
+        .collection("userPref")
+        .where('userId', isEqualTo: id)
+        .get()
+        .then((value) {
+      value.docs.forEach((result) {
+        print(id);
+        print(result.data());
+        var a2 = result.data()[genre];
+        a2++;
+        var docId = result.id;
+        print(genre);
+        print(docId);
 
+        CollectionReference userPrefs =
+            FirebaseFirestore.instance.collection('userPref');
+
+        return userPrefs
+            .doc(docId)
+            .update({genre: a2})
+            .then((value) => print("Pref Updated"))
+            .catchError((error) => print("Failed to update pref: $error"));
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //CollectionReference userPref =
-    //FirebaseFirestore.instance.collection('userPref');
-    //final FirebaseAuth auth = FirebaseAuth.instance;
-    //final User user = auth.currentUser;
-    //final userId = user.uid;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User user = auth.currentUser;
+    final userId = user.uid;
+
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.blue[50],
@@ -88,38 +109,43 @@ class _MapScreenState extends State<MapScreen> {
                 flex: 6,
                 child: GoogleMap(
                   initialCameraPosition:
-                      CameraPosition(target: _initialcameraposition
-                      ),
+                      CameraPosition(target: _initialcameraposition),
                   onMapCreated: _onMapCreated,
                   myLocationButtonEnabled: true,
                   myLocationEnabled: true,
                   mapType: MapType.normal,
                   markers: Set<Marker>.of(markers.values),
                 ),
-
               ),
               Expanded(
                 flex: 4,
                 child: Column(
                   children: <Widget>[
                     Flexible(
-                    child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('locationData')
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (!snapshot.hasData) return new Text('Loading...');
-                        return new ListView(
-                          children: snapshot.data.docs.map((docsTitles) {
-                            return new ListTile(
-                              title: new Text(docsTitles.data()['name']),
-                              subtitle: new Text(docsTitles.data()['address']),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('locationData')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) return new Text('Loading...');
+                          return new ListView(
+                            children: snapshot.data.docs.map((docsTitles) {
+                              return new ListTile(
+                                title: new Text(docsTitles.data()['name']),
+                                subtitle:
+                                    new Text(docsTitles.data()['address']),
+                                trailing: Icon(Icons.add),
+                                enabled: true,
+                                onTap: () {
+                                  print("Tapped");
+                                  addFavorite(userId, docsTitles.data()['genre']);
+                                },
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -129,6 +155,5 @@ class _MapScreenState extends State<MapScreen> {
         ),
       ),
     );
-
   }
 }
