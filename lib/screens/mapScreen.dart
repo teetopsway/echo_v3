@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
+import 'package:favorite_button/favorite_button.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -73,14 +74,33 @@ class _MapScreenState extends State<MapScreen> {
         .get()
         .then((value) {
       value.docs.forEach((result) {
-        print(id);
-        print(result.data());
         var a2 = result.data()[genre];
         a2++;
         var docId = result.id;
-        print(genre);
-        print(docId);
+        CollectionReference userPrefs =
+            FirebaseFirestore.instance.collection('userPref');
 
+        return userPrefs
+            .doc(docId)
+            .update({genre: a2})
+            .then((value) => print("Pref Updated"))
+            .catchError((error) => print("Failed to update pref: $error"));
+      });
+    });
+  }
+
+  Future<void> removeFavorite(id, genre) async {
+    await FirebaseFirestore.instance
+        .collection("userPref")
+        .where('userId', isEqualTo: id)
+        .get()
+        .then((value) {
+      value.docs.forEach((result) {
+        print('Step One');
+        var a2 = result.data()[genre];
+        a2 = a2 - 1;
+        print(a2);
+        var docId = result.id;
         CollectionReference userPrefs =
             FirebaseFirestore.instance.collection('userPref');
 
@@ -132,16 +152,23 @@ class _MapScreenState extends State<MapScreen> {
                           return new ListView(
                             children: snapshot.data.docs.map((docsTitles) {
                               return new ListTile(
-                                title: new Text(docsTitles.data()['name']),
-                                subtitle:
-                                    new Text(docsTitles.data()['address']),
-                                trailing: Icon(Icons.add),
-                                enabled: true,
-                                onTap: () {
-                                  print("Tapped");
-                                  addFavorite(userId, docsTitles.data()['genre']);
-                                },
-                              );
+                                  title: new Text(docsTitles.data()['name']),
+                                  subtitle:
+                                      new Text(docsTitles.data()['address']),
+                                  trailing: FavoriteButton(
+                                    valueChanged: (_isFavorite) {
+                                      if (_isFavorite == true) {
+                                        print('Is Favorite $_isFavorite');
+                                        addFavorite(
+                                            userId, docsTitles.data()['genre']);
+                                      } else if (_isFavorite == false){
+                                        print('is favorite2 $_isFavorite');
+                                        removeFavorite(
+                                            userId, docsTitles.data()['genre']);
+                                      }
+                                    },
+                                    iconSize: 30,
+                                  ));
                             }).toList(),
                           );
                         },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:echo_v3/screens/loginPage.dart';
-import 'package:echo_v3/main.dart';
+//import 'package:echo_v3/main.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
