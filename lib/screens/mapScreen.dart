@@ -23,9 +23,6 @@ class _MapScreenState extends State<MapScreen> {
     FirebaseFirestore.instance.collection("locationData").get().then((docs) {
       if (docs.docs.isNotEmpty) {
         for (int i = 0; i < docs.docs.length; ++i) {
-          print(docs.docs[i]);
-          print(i);
-          print(docs.docs.length);
           initMarker(docs.docs[i], docs.docs[i].id);
         }
       }
@@ -48,7 +45,8 @@ class _MapScreenState extends State<MapScreen> {
 
   Location _location = Location();
   var l;
-  LatLng _initialcameraposition = const LatLng(45.521563, -122.677433);
+  
+  LatLng _initialcameraposition = LatLng(45.521563, -122.677433);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -61,6 +59,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       );
+      _initialcameraposition = LatLng(l.latitude, l.longitude);
       populateClients();
       print('_onMapCreated sucess');
     });
@@ -113,6 +112,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -151,7 +151,9 @@ class _MapScreenState extends State<MapScreen> {
                           if (!snapshot.hasData) return new Text('Loading...');
                           return new ListView(
                             children: snapshot.data.docs.map((docsTitles) {
-                              return new ListTile(
+                              return new ListTileTheme(
+                                  tileColor: Colors.teal,
+                                child: ListTile(
                                   title: new Text(docsTitles.data()['name']),
                                   subtitle:
                                       new Text(docsTitles.data()['address']),
@@ -168,7 +170,13 @@ class _MapScreenState extends State<MapScreen> {
                                       }
                                     },
                                     iconSize: 30,
-                                  ));
+                                  ),
+
+                                onTap: () {
+                                  print('Tap Success');
+
+                                }
+                              ));
                             }).toList(),
                           );
                         },
