@@ -45,7 +45,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Location _location = Location();
   var l;
-  
+
   LatLng _initialcameraposition = LatLng(45.521563, -122.677433);
 
   void _onMapCreated(GoogleMapController controller) {
@@ -112,6 +112,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  int selectedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -148,37 +149,47 @@ class _MapScreenState extends State<MapScreen> {
                             .snapshots(),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) return new Text('Loading...');
-                          return new ListView(
-                            children: snapshot.data.docs.map((docsTitles) {
-                              return new ListTileTheme(
-                                  tileColor: Colors.teal,
-                                child: ListTile(
-                                  title: new Text(docsTitles.data()['name']),
-                                  subtitle:
-                                      new Text(docsTitles.data()['address']),
-                                  trailing: FavoriteButton(
-                                    valueChanged: (_isFavorite) {
-                                      if (_isFavorite == true) {
-                                        print('Is Favorite $_isFavorite');
-                                        addFavorite(
-                                            userId, docsTitles.data()['genre']);
-                                      } else if (_isFavorite == false){
-                                        print('is favorite2 $_isFavorite');
-                                        removeFavorite(
-                                            userId, docsTitles.data()['genre']);
-                                      }
-                                    },
-                                    iconSize: 30,
-                                  ),
-
-                                onTap: () {
-                                  print('Tap Success');
-
-                                }
-                              ));
-                            }).toList(),
-                          );
+                          if (snapshot.hasData) {
+                            List docTiles = snapshot.data.docs.toList();
+                            print(docTiles);
+                            return new ListView.builder(
+                                itemCount: docTiles.length,
+                                itemBuilder: (buildContext, index) {
+                                  return Container(
+                                      color: selectedIndex == index
+                                          ? Colors.amber
+                                          : Colors.transparent,
+                                      child: ListTile(
+                                          title: new Text(docTiles[index].data()['name']),
+                                          subtitle:
+                                              new Text(docTiles[index].data()['address']),
+                                          trailing: FavoriteButton(
+                                            valueChanged: (_isFavorite) {
+                                              if (_isFavorite == true) {
+                                                print(
+                                                    'Is Favorite $_isFavorite');
+                                                addFavorite(userId,
+                                                    docTiles[index].data()['genre']);
+                                              } else if (_isFavorite == false) {
+                                                print(
+                                                    'is favorite2 $_isFavorite');
+                                                removeFavorite(userId,
+                                                    docTiles[index].data()['genre']);
+                                              }
+                                            },
+                                            iconSize: 30,
+                                          ),
+                                          onTap: () {
+                                            print('Tap Success');
+                                            setState(() {
+                                              selectedIndex = index;
+                                            });
+                                          }));
+                                });
+                          }
+                          else {
+                            return Text('Loading');
+                          }
                         },
                       ),
                     ),
