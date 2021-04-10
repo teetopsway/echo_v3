@@ -13,6 +13,8 @@ class MapScreen extends StatefulWidget {
   _MapScreenState createState() => _MapScreenState();
 }
 
+MarkerId markers;
+
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController mapController;
 
@@ -31,16 +33,19 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void initMarker(bus, busId) {
+    InfoWindow markerWindow = InfoWindow(title: bus["name"], snippet: bus["address"]);
     var markerIdVal = busId;
     final MarkerId markerId = MarkerId(markerIdVal);
-    final Marker marker = Marker(
+    Marker marker = Marker(
       markerId: markerId,
       position: LatLng(bus["lat"], bus["long"]),
+      infoWindow: markerWindow,
     );
     setState(() {
       markers[markerId] = marker;
     });
-    print('initmarker sucess');
+    String diag = markerId.toString();
+    print('initmarker sucess ' + diag);
   }
 
   Location _location = Location();
@@ -112,6 +117,21 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  Future<void> highlightMarker(markerNum, markerList) async {
+    int markerInt = int.parse(markerNum) - 1;
+    var markerList = markers.values.toList();
+    print('MARKERLIST ' + markerList.toString());
+    Marker markerA = markerList[markerInt];
+    print('MARKERA ' + markerA.toString());
+    print('MARKERS ' + markers.toString());
+    MarkerId markerTouch = markerA.markerId;
+    print(markerTouch);
+    setState(() {
+      mapController.showMarkerInfoWindow(markerTouch);
+    });
+
+  }
+
   int selectedIndex;
 
   @override
@@ -119,7 +139,6 @@ class _MapScreenState extends State<MapScreen> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final userId = user.uid;
-
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.blue[50],
@@ -151,7 +170,6 @@ class _MapScreenState extends State<MapScreen> {
                             AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             List docTiles = snapshot.data.docs.toList();
-                            print(docTiles);
                             return new ListView.builder(
                                 itemCount: docTiles.length,
                                 itemBuilder: (buildContext, index) {
@@ -160,21 +178,26 @@ class _MapScreenState extends State<MapScreen> {
                                           ? Colors.amber
                                           : Colors.transparent,
                                       child: ListTile(
-                                          title: new Text(docTiles[index].data()['name']),
-                                          subtitle:
-                                              new Text(docTiles[index].data()['address']),
+                                          title: new Text(
+                                              docTiles[index].data()['name']),
+                                          subtitle: new Text(docTiles[index]
+                                              .data()['address']),
                                           trailing: FavoriteButton(
                                             valueChanged: (_isFavorite) {
                                               if (_isFavorite == true) {
                                                 print(
                                                     'Is Favorite $_isFavorite');
-                                                addFavorite(userId,
-                                                    docTiles[index].data()['genre']);
+                                                addFavorite(
+                                                    userId,
+                                                    docTiles[index]
+                                                        .data()['genre']);
                                               } else if (_isFavorite == false) {
                                                 print(
                                                     'is favorite2 $_isFavorite');
-                                                removeFavorite(userId,
-                                                    docTiles[index].data()['genre']);
+                                                removeFavorite(
+                                                    userId,
+                                                    docTiles[index]
+                                                        .data()['genre']);
                                               }
                                             },
                                             iconSize: 30,
@@ -183,11 +206,14 @@ class _MapScreenState extends State<MapScreen> {
                                             print('Tap Success');
                                             setState(() {
                                               selectedIndex = index;
+                                              print('THIS IS THE ID ' +
+                                                  docTiles[index].id);
+                                              highlightMarker(
+                                                  docTiles[index].id, markers);
                                             });
                                           }));
                                 });
-                          }
-                          else {
+                          } else {
                             return Text('Loading');
                           }
                         },
