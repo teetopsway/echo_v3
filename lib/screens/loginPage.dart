@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:echo_v3/screens/homePage.dart';
 import 'package:echo_v3/screens/registration.dart';
+import 'package:echo_v3/screens/mapScreen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _auth = FirebaseAuth.instance;
+
   bool showProgress = false;
   String email, password;
   @override

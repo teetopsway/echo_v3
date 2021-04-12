@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
 import 'package:favorite_button/favorite_button.dart';
+import 'package:echo_v3/screens/detailsPage.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -33,7 +34,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void initMarker(bus, busId) {
-    InfoWindow markerWindow = InfoWindow(title: bus["name"], snippet: bus["address"]);
+    InfoWindow markerWindow =
+        InfoWindow(title: bus["name"], snippet: bus["address"]);
     var markerIdVal = busId;
     final MarkerId markerId = MarkerId(markerIdVal);
     Marker marker = Marker(
@@ -129,10 +131,11 @@ class _MapScreenState extends State<MapScreen> {
     setState(() {
       mapController.showMarkerInfoWindow(markerTouch);
     });
-
   }
 
   int selectedIndex;
+  List detailsList = ['1'];
+  List docTiles;
 
   @override
   Widget build(BuildContext context) {
@@ -170,48 +173,64 @@ class _MapScreenState extends State<MapScreen> {
                             AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasData) {
                             List docTiles = snapshot.data.docs.toList();
+
                             return new ListView.builder(
                                 itemCount: docTiles.length,
                                 itemBuilder: (buildContext, index) {
                                   return Container(
-                                      color: selectedIndex == index
-                                          ? Colors.amber
-                                          : Colors.transparent,
-                                      child: ListTile(
-                                          title: new Text(
-                                              docTiles[index].data()['name']),
-                                          subtitle: new Text(docTiles[index]
-                                              .data()['address']),
-                                          trailing: FavoriteButton(
-                                            valueChanged: (_isFavorite) {
-                                              if (_isFavorite == true) {
-                                                print(
-                                                    'Is Favorite $_isFavorite');
-                                                addFavorite(
-                                                    userId,
-                                                    docTiles[index]
-                                                        .data()['genre']);
-                                              } else if (_isFavorite == false) {
-                                                print(
-                                                    'is favorite2 $_isFavorite');
-                                                removeFavorite(
-                                                    userId,
-                                                    docTiles[index]
-                                                        .data()['genre']);
-                                              }
-                                            },
-                                            iconSize: 30,
+                                    color: selectedIndex == index
+                                        ? Colors.amber
+                                        : Colors.transparent,
+                                    child: ListTile(
+                                      title: new Text(
+                                          docTiles[index].data()['name']),
+                                      subtitle: new Text(
+                                          docTiles[index].data()['address']),
+                                      trailing: FavoriteButton(
+                                        valueChanged: (_isFavorite) {
+                                          if (_isFavorite == true) {
+                                            print('Is Favorite $_isFavorite');
+                                            addFavorite(
+                                                userId,
+                                                docTiles[index]
+                                                    .data()['genre']);
+                                          } else if (_isFavorite == false) {
+                                            print('is favorite2 $_isFavorite');
+                                            removeFavorite(
+                                                userId,
+                                                docTiles[index]
+                                                    .data()['genre']);
+                                          }
+                                        },
+                                        iconSize: 30,
+                                      ),
+                                      onTap: () {
+                                        print('Tap Success');
+                                        setState(() {
+                                          selectedIndex = index;
+                                          print('THIS IS THE ID ' +
+                                              docTiles[index].id);
+                                          highlightMarker(
+                                              docTiles[index].id, markers);
+                                        });
+                                      },
+                                      onLongPress: () {
+                                        detailsList.add(docTiles[index].data()['name']);
+                                        detailsList.add(docTiles[index].data()['description']);
+                                        detailsList.add(docTiles[index].data()['imageUrl']);
+                                        print(detailsList);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => DetailsPage(),
+                                            settings: RouteSettings(
+                                              arguments: detailsList,
+                                            ),
                                           ),
-                                          onTap: () {
-                                            print('Tap Success');
-                                            setState(() {
-                                              selectedIndex = index;
-                                              print('THIS IS THE ID ' +
-                                                  docTiles[index].id);
-                                              highlightMarker(
-                                                  docTiles[index].id, markers);
-                                            });
-                                          }));
+                                        );
+                                      },
+                                    ),
+                                  );
                                 });
                           } else {
                             return Text('Loading');
