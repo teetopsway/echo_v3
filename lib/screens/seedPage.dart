@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:echo_v3/screens/mapScreen.dart';
@@ -10,23 +9,23 @@ class SeedPage extends StatefulWidget {
   _SeedPageState createState() => _SeedPageState();
 }
 
-var pizzaPref, latinPref, asianPref;
+var pizzaPref, latinPref, asianPref; //initialize variables.
 
 class _SeedPageState extends State {
   @override
   Widget build(BuildContext context) {
     CollectionReference userPref =
-        FirebaseFirestore.instance.collection('userPref');
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User user = auth.currentUser;
-    final userId = user.uid;
+        FirebaseFirestore.instance.collection('userPref'); //initializes the firebase collection, aka calls our collection on FireStore. in this case it calls the 'userPref" collection.
+    final FirebaseAuth auth = FirebaseAuth.instance; //initializes firebase authentication object
+    final User user = auth.currentUser; //current user stored in variable
+    final userId = user.uid; //current user's id number.
 
     Future<void> addUserPref() {
       return userPref
           .add({
             'userId': userId,
             'pizzaPref': pizzaPref,
-            'latinPref': latinPref,
+            'latinPref': latinPref, //This function adds the user preferences to the collection, with the entered values, including the userId which will serve as our index.
             'asianPref': asianPref,
           })
           .then((value) => print("User Added"))
@@ -51,7 +50,7 @@ class _SeedPageState extends State {
                 child: RadioListTile(
                   value: 1,
                   groupValue: asianPref,
-                  title: Text('1'),
+                  title: Text('1'), //These are the radio buttons.
                   onChanged: (value) {
                     setState(() {
                       asianPref = value;
@@ -186,16 +185,16 @@ class _SeedPageState extends State {
             child: MaterialButton(
               onPressed: () {
                 if (pizzaPref != null &&
-                    latinPref != null &&
+                    latinPref != null && //This just makes sure that the buttons are filled out
                     asianPref != null) {
                   addUserPref();
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MapScreen()));
+                      MaterialPageRoute(builder: (context) => MapScreen())); //This pushes the screen to the mapScreen.
                 } else {
                   Fluttertoast.showToast(
                       msg: "Please Rate All Genres",
                       toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
+                      gravity: ToastGravity.CENTER, //Popup
                       backgroundColor: Colors.blueAccent,
                       textColor: Colors.white,
                       fontSize: 16.0);

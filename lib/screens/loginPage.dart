@@ -2,29 +2,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart'; //These are just imports, they import all of the needed resources and packages.
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:echo_v3/screens/homePage.dart';
 import 'package:echo_v3/screens/registration.dart';
-import 'package:echo_v3/screens/mapScreen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-
 class _LoginPageState extends State<LoginPage> {
   final _auth = FirebaseAuth.instance;
 
-  bool showProgress = false;
+  bool showProgress = false; //initialize variables
   String email, password;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10), //This is just the spinning wheel that appears when it is loading, it runs indepedently of any other code.
         child: ModalProgressHUD(
           inAsyncCall: showProgress,
           child: Column(
@@ -33,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
               Expanded(
                 child: Container(
                   padding: EdgeInsets.all(20),
-                  child: new Image.asset('assets/echo_logo.png'),
+                  child: new Image.asset('assets/echo_logo.png'), //here is the logo.
                   alignment: Alignment.center,
                 ),
               ),
@@ -47,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                   email = value; // get value from TextField
                 },
                 decoration: InputDecoration(
-                    hintText: "Email",
+                    hintText: "Email", //Hint for the text box
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32.0)))),
               ),
@@ -66,8 +64,8 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.all(Radius.circular(32.0)))),
               ),
               FlatButton(
-                onPressed: (){
-                  //forgot password screen
+                onPressed: () {
+                  //forgot password screen to be implemented here.
                 },
                 textColor: Colors.blue,
                 child: Text('Forgot Password?'),
@@ -79,18 +77,20 @@ class _LoginPageState extends State<LoginPage> {
                 child: MaterialButton(
                   onPressed: () async {
                     setState(() {
-
-                      bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+                      bool emailValid = RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")   //These just check the entries to make sure they are what they are suppsoed to be
+                          .hasMatch(email);
                       print(emailValid);
                       if (emailValid == false) {
                         Fluttertoast.showToast(
                             msg: "Please enter an Email",
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.CENTER,
-                            backgroundColor: Colors.blueAccent,
+                            backgroundColor: Colors.blueAccent, //Flutter toast that pops up telling you if the email is wrong or if the password is wrong.
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        Navigator.push(context,
+                        Navigator.push(
+                            context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()));
                         setState(() {
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                     });
                     try {
                       final newUser = await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
+                          email: email, password: password); //This calls the firebase authentication and checks to see if the password is good or not.
                       print(newUser.toString());
 
                       if (newUser != null) {
@@ -112,25 +112,25 @@ class _LoginPageState extends State<LoginPage> {
                             backgroundColor: Colors.blueAccent,
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        Navigator.push(context,
+                        Navigator.push(
+                            context,
                             MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                                builder: (context) => HomePage()));// pushes to the HomePage
                         setState(() {
                           showProgress = false;
                         });
                       }
-
                     } on FirebaseAuthException catch (e) {
-
                       if (e.code == 'user-not-found') {
                         Fluttertoast.showToast(
                             msg: "User Not Found",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.CENTER, //User not found popup
                             backgroundColor: Colors.blueAccent,
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        Navigator.push(context,
+                        Navigator.push(
+                            context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()));
                         setState(() {
@@ -141,11 +141,12 @@ class _LoginPageState extends State<LoginPage> {
                         Fluttertoast.showToast(
                             msg: "Incorrect Password",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.CENTER, //wrong password popup
                             backgroundColor: Colors.blueAccent,
                             textColor: Colors.white,
                             fontSize: 16.0);
-                        Navigator.push(context,
+                        Navigator.push(
+                            context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()));
                         setState(() {
@@ -154,36 +155,36 @@ class _LoginPageState extends State<LoginPage> {
                         print('Wrong password provided for that user.');
                       }
                     }
-
                   },
                   minWidth: 200.0,
                   height: 45.0,
                   child: Text(
                     "Login",
                     style:
-                    TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
                   ),
                 ),
               ),
               Container(
                   child: Row(
-                    children: <Widget>[
-                      FlatButton(
-                        textColor: Colors.blue,
-                        child: Text(
-                          'Create Account',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(
-                                  builder: (context) => RegistrationPage()));
-                          //signup screen
-                        },
-                      )
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  )),
+                children: <Widget>[
+                  FlatButton(
+                    textColor: Colors.blue,
+                    child: Text(
+                      'Create Account', //button that routes to the registration page
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegistrationPage()));
+                      //signup screen
+                    },
+                  )
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              )),
             ],
           ),
         ),
