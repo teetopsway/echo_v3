@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
 import 'package:favorite_button/favorite_button.dart';
 import 'package:echo_v3/screens/detailsPage.dart';
+import 'package:echo_v3/screens/loginPage.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -142,8 +141,8 @@ class _MapScreenState extends State<MapScreen> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User user = auth.currentUser;
     final userId = user.uid;
-    return MaterialApp(
-      home: Scaffold(
+    return WillPopScope(
+      child: Scaffold(
         backgroundColor: Colors.blue[50],
         body: Container(
           child: Column(
@@ -215,9 +214,12 @@ class _MapScreenState extends State<MapScreen> {
                                         });
                                       },
                                       onLongPress: () {
-                                        detailsList.add(docTiles[index].data()['name']);
-                                        detailsList.add(docTiles[index].data()['description']);
-                                        detailsList.add(docTiles[index].data()['imageUrl']);
+                                        detailsList.add(
+                                            docTiles[index].data()['name']);
+                                        detailsList.add(docTiles[index]
+                                            .data()['description']);
+                                        detailsList.add(
+                                            docTiles[index].data()['imageUrl']);
                                         print(detailsList);
                                         Navigator.push(
                                           context,
@@ -243,6 +245,27 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ],
           ),
+        ),
+      ),
+      onWillPop: () => showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Text('Warning'),
+          content: Text('Do you really want to logout?'),
+          actions: [
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              }
+            ),
+            FlatButton(
+              child: Text('No'),
+              onPressed: () => Navigator.pop(c, false),
+            ),
+          ],
         ),
       ),
     );

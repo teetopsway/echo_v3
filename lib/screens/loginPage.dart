@@ -1,6 +1,7 @@
 /* screens/loginPage.dart */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart'; //These are just imports, they import all of the needed resources and packages.
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,7 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   String email, password;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope( //Overrides backbutton
+      child: Scaffold(
       backgroundColor: Colors.blue[50],
       body: Padding(
         padding: EdgeInsets.all(10), //This is just the spinning wheel that appears when it is loading, it runs indepedently of any other code.
@@ -187,6 +189,24 @@ class _LoginPageState extends State<LoginPage> {
               )),
             ],
           ),
+        ),
+      ),
+    ),
+      onWillPop: () => showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Text('Warning'),
+          content: Text('Do you really want to exit?'),
+          actions: [
+            FlatButton(
+                child: Text('Yes'),
+                onPressed: () => SystemNavigator.pop(),
+            ),
+            FlatButton(
+              child: Text('No'),
+              onPressed: () => Navigator.pop(c, false),
+            ),
+          ],
         ),
       ),
     );
